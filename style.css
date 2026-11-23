@@ -143,6 +143,12 @@ select {
     margin: 0;
 }
 
+.section-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -207,6 +213,16 @@ select {
 .button-primary {
     background: #76472f;
     color: #fff;
+}
+
+.button-secondary {
+    border: 1px solid #d8cec8;
+    background: #fff;
+    color: #5e3827;
+}
+
+.button-secondary:hover {
+    background: #f7f1ed;
 }
 
 .button-primary:hover:not(:disabled) {
@@ -383,6 +399,11 @@ th {
     }
 
     .section-heading-inline {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .section-actions {
         align-items: stretch;
         flex-direction: column;
     }

@@ -168,6 +168,46 @@ function renderSales() {
     });
 }
 
+function escapeCsv(value) {
+    return `"${String(value ?? '').replace(/"/g, '""')}"`;
+}
+
+function exportSales() {
+    if (sales.length === 0) {
+        showFeedback('salesFeedback', 'Ainda não há vendas para incluir no extrato.', 'error');
+        return;
+    }
+
+    const totalQuantity = sales.reduce((sum, sale) => sum + sale.quantity, 0);
+    const totalSales = sales.reduce((sum, sale) => sum + sale.total, 0);
+    const rows = [
+        ['Data', 'Peça', 'Tamanho', 'Cor', 'Quantidade', 'Preço unitário', 'Cliente', 'Total'],
+        ...sales.map(sale => [
+            sale.date,
+            sale.name,
+            sale.size,
+            sale.color,
+            sale.quantity,
+            sale.unitPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+            sale.customer || '',
+            sale.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+        ]),
+        ['TOTAL', '', '', '', totalQuantity, '', '', totalSales.toLocaleString('pt-BR', { minimumFractionDigits: 2 })]
+    ];
+
+    const csv = `\uFEFF${rows.map(row => row.map(escapeCsv).join(';')).join('\r\n')}`;
+    const file = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `extrato-vendas-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showFeedback('salesFeedback', 'Extrato completo baixado em CSV, com todas as vendas e os totais.', 'success');
+}
+
 function render() {
     renderSummary();
     renderInventory();
@@ -251,5 +291,6 @@ saleForm.addEventListener('submit', event => {
 });
 
 inventorySearch.addEventListener('input', renderInventory);
+document.getElementById('exportSalesButton').addEventListener('click', exportSales);
 
 render();
