@@ -218,6 +218,18 @@ select {
     opacity: 0.55;
 }
 
+.button-delete {
+    min-height: 36px;
+    padding: 7px 10px;
+    background: #fae9e7;
+    color: #962e27;
+    font-size: 12px;
+}
+
+.button-delete:hover {
+    background: #f3d4d0;
+}
+
 button:focus-visible {
     outline: 3px solid #d79a72;
     outline-offset: 2px;

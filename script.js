@@ -69,7 +69,7 @@ function renderInventory() {
     if (visibleProducts.length === 0) {
         const row = document.createElement('tr');
         const cell = addCell(row, products.length ? 'Nenhuma peça encontrada.' : 'Seu estoque ainda está vazio.');
-        cell.colSpan = 7;
+        cell.colSpan = 8;
         cell.className = 'empty-state';
         inventoryBody.appendChild(row);
         return;
@@ -91,8 +91,37 @@ function renderInventory() {
         status.textContent = product.stock === 0 ? 'Sem estoque' :
             product.stock <= LOW_STOCK_THRESHOLD ? 'Estoque baixo' : 'Disponível';
         statusCell.appendChild(status);
+
+        const actionCell = addCell(row, '');
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'button button-delete';
+        deleteButton.textContent = 'Excluir';
+        deleteButton.setAttribute('aria-label', `Excluir ${product.name}, tamanho ${product.size}, cor ${product.color}`);
+        deleteButton.addEventListener('click', () => deleteProduct(product.id));
+        actionCell.appendChild(deleteButton);
         inventoryBody.appendChild(row);
     });
+}
+
+function deleteProduct(productId) {
+    const productIndex = products.findIndex(product => product.id === productId);
+
+    if (productIndex === -1) {
+        return;
+    }
+
+    const product = products[productIndex];
+    const description = `${product.name} • tamanho ${product.size} • cor ${product.color}`;
+
+    if (!confirm(`Excluir ${description} do estoque? As vendas anteriores serão mantidas no histórico.`)) {
+        return;
+    }
+
+    products.splice(productIndex, 1);
+    saveState();
+    render();
+    showFeedback('productFeedback', `${description} foi excluída do estoque.`, 'success');
 }
 
 function renderSaleOptions() {
