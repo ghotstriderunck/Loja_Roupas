@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#362b27">
+    <title>Minha Loja | Roupas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <header class="header">
+            <div class="brand-mark" aria-hidden="true">ML</div>
+            <div>
+                <p class="eyebrow">GESTÃO DA LOJA</p>
+                <h1>Minha Loja</h1>
+                <p class="header-caption">Estoque e vendas de roupas</p>
+            </div>
+        </header>
+
+        <section class="summary" aria-label="Resumo da loja">
+            <article class="summary-card">
+                <span>Modelos e variações</span>
+                <strong id="productCount">0</strong>
+            </article>
+            <article class="summary-card">
+                <span>Peças em estoque</span>
+                <strong id="stockCount">0</strong>
+            </article>
+            <article class="summary-card">
+                <span>Variações com estoque baixo</span>
+                <strong id="lowStockCount">0</strong>
+            </article>
+            <article class="summary-card">
+                <span>Total vendido</span>
+                <strong id="salesTotal">R$ 0,00</strong>
+            </article>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">PRODUTOS</p>
+                    <h2>Cadastrar peça ou repor estoque</h2>
+                </div>
+            </div>
+            <p class="section-help">Cadastre cada combinação de produto, tamanho e cor como uma variação.</p>
+
+            <form id="productForm" class="form-grid">
+                <label class="field field-wide">
+                    <span>Nome da peça</span>
+                    <input id="productName" name="productName" type="text" maxlength="80" placeholder="Ex.: Camiseta básica" required>
+                </label>
+                <label class="field">
+                    <span>Categoria</span>
+                    <input id="productCategory" name="category" type="text" maxlength="50" placeholder="Ex.: Camisetas">
+                </label>
+                <label class="field">
+                    <span>Tamanho</span>
+                    <input id="productSize" name="size" type="text" maxlength="20" placeholder="Ex.: P, M, G ou único" required>
+                </label>
+                <label class="field">
+                    <span>Cor</span>
+                    <input id="productColor" name="color" type="text" maxlength="40" placeholder="Ex.: Preto" required>
+                </label>
+                <label class="field">
+                    <span>Quantidade recebida</span>
+                    <input id="productStock" name="stock" type="number" min="0" step="1" value="1" required>
+                </label>
+                <label class="field">
+                    <span>Preço de venda (R$)</span>
+                    <input id="productPrice" name="price" type="number" min="0.01" step="0.01" placeholder="0,00" required>
+                </label>
+                <div class="form-actions">
+                    <button class="button button-primary" type="submit">Adicionar peça / estoque</button>
+                </div>
+            </form>
+            <p id="productFeedback" class="feedback" aria-live="polite"></p>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading section-heading-inline">
+                <div>
+                    <p class="eyebrow">INVENTÁRIO</p>
+                    <h2>Peças cadastradas</h2>
+                </div>
+                <label class="search-field">
+                    <span class="visually-hidden">Buscar no estoque</span>
+                    <input id="inventorySearch" type="search" placeholder="Buscar peça, tamanho ou cor">
+                </label>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Peça</th>
+                            <th scope="col">Categoria</th>
+                            <th scope="col">Tamanho</th>
+                            <th scope="col">Cor</th>
+                            <th scope="col">Quantidade</th>
+                            <th scope="col">Preço</th>
+                            <th scope="col">Situação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">VENDAS</p>
+                    <h2>Registrar venda</h2>
+                </div>
+            </div>
+            <form id="saleForm" class="form-grid sale-grid">
+                <label class="field field-wide">
+                    <span>Peça / variação</span>
+                    <select id="saleProduct" required>
+                        <option value="">Cadastre uma peça com estoque primeiro</option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span>Quantidade</span>
+                    <input id="saleQuantity" type="number" min="1" step="1" value="1" required>
+                </label>
+                <label class="field">
+                    <span>Cliente (opcional)</span>
+                    <input id="saleCustomer" type="text" maxlength="80" placeholder="Nome do cliente">
+                </label>
+                <div class="form-actions">
+                    <button id="saleButton" class="button button-primary" type="submit" disabled>Registrar venda</button>
+                </div>
+            </form>
+            <p id="saleFeedback" class="feedback" aria-live="polite"></p>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">HISTÓRICO</p>
+                    <h2>Vendas recentes</h2>
+                </div>
+                <p class="section-help">As últimas 20 vendas registradas.</p>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Data</th>
+                            <th scope="col">Peça / variação</th>
+                            <th scope="col">Quantidade</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="footer">Os dados ficam salvos neste navegador e neste dispositivo.</footer>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
