@@ -151,7 +151,7 @@ function renderSales() {
     if (recentSales.length === 0) {
         const row = document.createElement('tr');
         const cell = addCell(row, 'Nenhuma venda registrada ainda.');
-        cell.colSpan = 5;
+        cell.colSpan = 6;
         cell.className = 'empty-state';
         salesBody.appendChild(row);
         return;
@@ -164,8 +164,50 @@ function renderSales() {
         addCell(row, String(sale.quantity));
         addCell(row, sale.customer || '—');
         addCell(row, money.format(sale.total));
+
+        const actionCell = addCell(row, '');
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'button button-delete';
+        deleteButton.textContent = 'Excluir';
+        deleteButton.setAttribute('aria-label', `Excluir venda de ${sale.name}, tamanho ${sale.size}, cor ${sale.color}`);
+        deleteButton.addEventListener('click', () => deleteSale(sale));
+        actionCell.appendChild(deleteButton);
         salesBody.appendChild(row);
     });
+}
+
+function deleteSale(sale) {
+    const saleIndex = sales.indexOf(sale);
+
+    if (saleIndex === -1) {
+        return;
+    }
+
+    const description = `${sale.quantity} unidade(s) de ${sale.name} • tamanho ${sale.size} • cor ${sale.color}`;
+
+    if (!confirm(`Excluir a venda de ${description}? O valor será removido do extrato e as peças voltarão ao estoque se a variação ainda estiver cadastrada.`)) {
+        return;
+    }
+
+    const product = sale.productId
+        ? products.find(item => item.id === sale.productId)
+        : products.find(item =>
+            normalize(item.name) === normalize(sale.name) &&
+            normalize(item.size) === normalize(sale.size) &&
+            normalize(item.color) === normalize(sale.color)
+        );
+
+    if (product) {
+        product.stock += sale.quantity;
+    }
+
+    sales.splice(saleIndex, 1);
+    saveState();
+    render();
+    showFeedback('salesFeedback', product
+        ? `Venda excluída e ${sale.quantity} unidade(s) devolvida(s) ao estoque.`
+        : 'Venda excluída. A variação não está mais cadastrada, então o estoque não foi alterado.', 'success');
 }
 
 function escapeCsv(value) {
@@ -274,6 +316,7 @@ saleForm.addEventListener('submit', event => {
     product.stock -= quantity;
     sales.push({
         date: new Date().toLocaleString('pt-BR'),
+        productId: product.id,
         name: product.name,
         size: product.size,
         color: product.color,
